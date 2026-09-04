@@ -1,10 +1,1001 @@
-import "./globals.css";
+"use client";
+
+import { useState } from "react";
+import {
+  Search,
+  Users,
+  Flame,
+  MessageCircle,
+  TrendingUp,
+  ExternalLink,
+  ChevronRight,
+  Sparkles,
+  MapPin,
+  Globe,
+  Instagram,
+  MoreHorizontal,
+} from "lucide-react";
+
+const leads = [
+  {
+    name: "Ana Martins",
+    city: "Uberlândia",
+    score: 92,
+    status: "Novo",
+    instagram: true,
+    website: false,
+    photos: 28,
+  },
+  {
+    name: "Bella Andrade",
+    city: "Uberaba",
+    score: 84,
+    status: "Interessante",
+    instagram: true,
+    website: false,
+    photos: 19,
+  },
+  {
+    name: "Laura Costa",
+    city: "Franca",
+    score: 76,
+    status: "Novo",
+    instagram: true,
+    website: false,
+    photos: 15,
+  },
+  {
+    name: "Maya Oliveira",
+    city: "Ribeirão Preto",
+    score: 68,
+    status: "Novo",
+    instagram: true,
+    website: true,
+    photos: 12,
+  },
+];
+
+function scoreColor(score: number) {
+  if (score >= 85) return "high";
+  if (score >= 70) return "medium";
+  return "low";
+}
 
 export default function Home() {
+  const [search, setSearch] = useState("");
+
+  const filteredLeads = leads.filter((lead) =>
+    `${lead.name} ${lead.city}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
+
   return (
-    <main>
-      <h1>EscarlateFinder</h1>
-      <p>Sistema de prospecção e gestão de leads.</p>
+    <main className="dashboard">
+      <div className="ambient ambientOne" />
+      <div className="ambient ambientTwo" />
+
+      <aside className="sidebar">
+        <div className="brand">
+          <div className="brandMark">
+            <span>✦</span>
+          </div>
+
+          <div>
+            <div className="brandName">ESCARLATE</div>
+            <div className="brandFinder">FINDER</div>
+          </div>
+        </div>
+
+        <div className="sidebarSection">
+          <span className="sectionLabel">MENU</span>
+
+          <button className="navItem active">
+            <TrendingUp size={18} />
+            Dashboard
+          </button>
+
+          <button className="navItem">
+            <Users size={18} />
+            Leads
+            <span className="navBadge">127</span>
+          </button>
+
+          <button className="navItem">
+            <Flame size={18} />
+            Interessantes
+            <span className="navBadge">34</span>
+          </button>
+
+          <button className="navItem">
+            <MessageCircle size={18} />
+            Abordados
+          </button>
+        </div>
+
+        <div className="sidebarSection">
+          <span className="sectionLabel">SISTEMA</span>
+
+          <button className="navItem">
+            <Search size={18} />
+            Prospecção
+          </button>
+
+          <button className="navItem">
+            <Globe size={18} />
+            Fontes
+          </button>
+        </div>
+
+        <div className="sidebarBottom">
+          <div className="scarletSymbol">☾</div>
+
+          <div>
+            <strong>EscarlateFinder</strong>
+            <span>Lead Intelligence</span>
+          </div>
+        </div>
+      </aside>
+
+      <section className="content">
+        <header className="topbar">
+          <div>
+            <span className="eyebrow">CENTRAL DE PROSPECÇÃO</span>
+            <h1>Dashboard</h1>
+          </div>
+
+          <div className="topActions">
+            <div className="statusOnline">
+              <span />
+              Sistema online
+            </div>
+
+            <button className="iconButton">
+              <MoreHorizontal size={20} />
+            </button>
+          </div>
+        </header>
+
+        <section className="hero">
+          <div>
+            <span className="heroKicker">
+              <Sparkles size={14} />
+              INTELLIGENCE
+            </span>
+
+            <h2>
+              Encontre oportunidades.
+              <br />
+              <span>Você decide quem abordar.</span>
+            </h2>
+
+            <p>
+              Descubra profissionais, identifique oportunidades digitais
+              e organize seus melhores leads em um único lugar.
+            </p>
+          </div>
+
+          <div className="heroSymbol">
+            <div className="symbolRing ringOne" />
+            <div className="symbolRing ringTwo" />
+            <span>✦</span>
+          </div>
+        </section>
+
+        <section className="statsGrid">
+          <div className="statCard">
+            <div className="statIcon">
+              <Users size={19} />
+            </div>
+
+            <div>
+              <span>Leads encontrados</span>
+              <strong>127</strong>
+              <small>+18 esta semana</small>
+            </div>
+          </div>
+
+          <div className="statCard featured">
+            <div className="statIcon">
+              <Flame size={19} />
+            </div>
+
+            <div>
+              <span>Alta prioridade</span>
+              <strong>34</strong>
+              <small>27% dos leads</small>
+            </div>
+          </div>
+
+          <div className="statCard">
+            <div className="statIcon">
+              <MessageCircle size={19} />
+            </div>
+
+            <div>
+              <span>Abordados</span>
+              <strong>17</strong>
+              <small>6 responderam</small>
+            </div>
+          </div>
+
+          <div className="statCard">
+            <div className="statIcon">
+              <TrendingUp size={19} />
+            </div>
+
+            <div>
+              <span>Pipeline potencial</span>
+              <strong>R$ 4.985</strong>
+              <small>5 oportunidades</small>
+            </div>
+          </div>
+        </section>
+
+        <section className="workspace">
+          <div className="sectionHeader">
+            <div>
+              <span className="eyebrow">PROSPECÇÃO</span>
+              <h3>Encontrar novos leads</h3>
+            </div>
+          </div>
+
+          <div className="searchPanel">
+            <div className="searchField">
+              <MapPin size={19} />
+              <input
+                placeholder="Digite uma cidade..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+
+            <select defaultValue="todas">
+              <option value="todas">Todas as fontes</option>
+              <option>Vitrine</option>
+              <option>JobModel</option>
+              <option>OfertaHot</option>
+            </select>
+
+            <button className="searchButton">
+              <Search size={18} />
+              Encontrar leads
+            </button>
+          </div>
+        </section>
+
+        <section className="leadsSection">
+          <div className="sectionHeader">
+            <div>
+              <span className="eyebrow">OPORTUNIDADES</span>
+              <h3>Leads recentes</h3>
+            </div>
+
+            <button className="viewAll">
+              Ver todos
+              <ChevronRight size={16} />
+            </button>
+          </div>
+
+          <div className="leadsList">
+            {filteredLeads.map((lead) => (
+              <article className="leadCard" key={lead.name}>
+                <div className="leadAvatar">
+                  {lead.name.charAt(0)}
+                </div>
+
+                <div className="leadMain">
+                  <div className="leadTitle">
+                    <h4>{lead.name}</h4>
+
+                    <span className={`priority ${scoreColor(lead.score)}`}>
+                      {lead.score >= 85 ? "ALTA PRIORIDADE" : "BOA OPORTUNIDADE"}
+                    </span>
+                  </div>
+
+                  <div className="leadMeta">
+                    <span>
+                      <MapPin size={13} />
+                      {lead.city}
+                    </span>
+
+                    <span>
+                      <Instagram size={13} />
+                      Instagram
+                    </span>
+
+                    <span>{lead.photos} fotos</span>
+                  </div>
+                </div>
+
+                <div className="leadWebsite">
+                  <span>Site próprio</span>
+                  <strong className={lead.website ? "yes" : "no"}>
+                    {lead.website ? "Identificado" : "Não identificado"}
+                  </strong>
+                </div>
+
+                <div className="score">
+                  <span>SCORE</span>
+                  <strong>{lead.score}</strong>
+                </div>
+
+                <div className="leadActions">
+                  <button className="smallButton">
+                    <ExternalLink size={15} />
+                    Perfil
+                  </button>
+
+                  <button className="smallButton primary">
+                    Interessante
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      </section>
+
+      <style jsx>{`
+        * {
+          box-sizing: border-box;
+        }
+
+        .dashboard {
+          min-height: 100vh;
+          background:
+            radial-gradient(circle at 75% 5%, rgba(130, 0, 30, 0.16), transparent 28%),
+            #080809;
+          color: #f5f5f5;
+          display: flex;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .ambient {
+          position: fixed;
+          width: 420px;
+          height: 420px;
+          border-radius: 50%;
+          filter: blur(120px);
+          pointer-events: none;
+          opacity: 0.13;
+        }
+
+        .ambientOne {
+          background: #9d0028;
+          top: 20%;
+          right: 5%;
+        }
+
+        .ambientTwo {
+          background: #5c001c;
+          bottom: -200px;
+          left: 20%;
+        }
+
+        .sidebar {
+          width: 250px;
+          min-height: 100vh;
+          border-right: 1px solid rgba(255, 255, 255, 0.07);
+          background: rgba(12, 12, 14, 0.9);
+          padding: 28px 18px;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+          z-index: 2;
+        }
+
+        .brand {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 0 10px 36px;
+        }
+
+        .brandMark {
+          width: 42px;
+          height: 42px;
+          border: 1px solid rgba(184, 0, 45, 0.7);
+          background: linear-gradient(145deg, #6e001f, #160006);
+          border-radius: 12px;
+          display: grid;
+          place-items: center;
+          color: #ff315f;
+          box-shadow: 0 0 30px rgba(150, 0, 45, 0.25);
+          font-size: 21px;
+        }
+
+        .brandName {
+          font-size: 12px;
+          font-weight: 800;
+          letter-spacing: 2.8px;
+        }
+
+        .brandFinder {
+          font-size: 10px;
+          letter-spacing: 4px;
+          color: #a3a3a8;
+          margin-top: 2px;
+        }
+
+        .sidebarSection {
+          margin-bottom: 30px;
+        }
+
+        .sectionLabel {
+          display: block;
+          font-size: 9px;
+          color: #66666d;
+          letter-spacing: 2px;
+          font-weight: 700;
+          padding: 0 12px 10px;
+        }
+
+        .navItem {
+          width: 100%;
+          border: 0;
+          background: transparent;
+          color: #8f8f97;
+          padding: 11px 12px;
+          border-radius: 9px;
+          display: flex;
+          align-items: center;
+          gap: 11px;
+          cursor: pointer;
+          text-align: left;
+          margin-bottom: 3px;
+          transition: 0.2s ease;
+        }
+
+        .navItem:hover {
+          background: rgba(255, 255, 255, 0.04);
+          color: white;
+        }
+
+        .navItem.active {
+          background: rgba(142, 0, 39, 0.17);
+          color: #ff315f;
+          box-shadow: inset 2px 0 0 #c6003c;
+        }
+
+        .navBadge {
+          margin-left: auto;
+          font-size: 10px;
+          color: #6d6d74;
+        }
+
+        .sidebarBottom {
+          margin-top: auto;
+          border-top: 1px solid rgba(255, 255, 255, 0.06);
+          padding: 20px 10px 0;
+          display: flex;
+          align-items: center;
+          gap: 11px;
+        }
+
+        .scarletSymbol {
+          width: 34px;
+          height: 34px;
+          border: 1px solid #3d111d;
+          border-radius: 50%;
+          display: grid;
+          place-items: center;
+          color: #a50036;
+        }
+
+        .sidebarBottom strong {
+          display: block;
+          font-size: 11px;
+        }
+
+        .sidebarBottom span {
+          display: block;
+          font-size: 9px;
+          color: #66666d;
+          margin-top: 3px;
+        }
+
+        .content {
+          flex: 1;
+          padding: 34px 48px 70px;
+          max-width: 1600px;
+          margin: 0 auto;
+          width: 100%;
+          position: relative;
+          z-index: 1;
+        }
+
+        .topbar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 32px;
+        }
+
+        .eyebrow {
+          color: #77777e;
+          font-size: 9px;
+          font-weight: 800;
+          letter-spacing: 2.2px;
+        }
+
+        h1 {
+          margin: 5px 0 0;
+          font-size: 29px;
+          letter-spacing: -1px;
+        }
+
+        .topActions {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+        }
+
+        .statusOnline {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          font-size: 11px;
+          color: #8c8c92;
+        }
+
+        .statusOnline span {
+          width: 7px;
+          height: 7px;
+          background: #55d58a;
+          border-radius: 50%;
+          box-shadow: 0 0 10px rgba(85, 213, 138, 0.6);
+        }
+
+        .iconButton {
+          width: 38px;
+          height: 38px;
+          display: grid;
+          place-items: center;
+          border-radius: 9px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: #111114;
+          color: #888890;
+        }
+
+        .hero {
+          min-height: 250px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          background:
+            linear-gradient(110deg, rgba(82, 0, 24, 0.28), transparent 55%),
+            rgba(16, 16, 19, 0.82);
+          border-radius: 18px;
+          padding: 38px 42px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          overflow: hidden;
+          position: relative;
+          margin-bottom: 20px;
+        }
+
+        .heroKicker {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          color: #e51d52;
+          font-size: 9px;
+          font-weight: 800;
+          letter-spacing: 2px;
+        }
+
+        .hero h2 {
+          font-size: clamp(30px, 3vw, 45px);
+          line-height: 1.05;
+          letter-spacing: -1.8px;
+          margin: 13px 0;
+          max-width: 700px;
+        }
+
+        .hero h2 span {
+          color: #77777f;
+        }
+
+        .hero p {
+          color: #85858c;
+          max-width: 570px;
+          line-height: 1.6;
+          font-size: 13px;
+        }
+
+        .heroSymbol {
+          width: 190px;
+          height: 190px;
+          position: relative;
+          display: grid;
+          place-items: center;
+          margin-right: 30px;
+        }
+
+        .heroSymbol > span {
+          font-size: 45px;
+          color: #d50045;
+          text-shadow: 0 0 35px rgba(213, 0, 69, 0.65);
+          z-index: 2;
+        }
+
+        .symbolRing {
+          position: absolute;
+          border: 1px solid rgba(185, 0, 54, 0.28);
+          border-radius: 50%;
+        }
+
+        .ringOne {
+          width: 145px;
+          height: 145px;
+        }
+
+        .ringTwo {
+          width: 190px;
+          height: 190px;
+          border-style: dashed;
+          animation: rotate 18s linear infinite;
+        }
+
+        @keyframes rotate {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        .statsGrid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 14px;
+          margin-bottom: 38px;
+        }
+
+        .statCard {
+          background: rgba(16, 16, 19, 0.82);
+          border: 1px solid rgba(255, 255, 255, 0.07);
+          border-radius: 13px;
+          padding: 19px;
+          display: flex;
+          gap: 13px;
+        }
+
+        .statCard.featured {
+          border-color: rgba(176, 0, 48, 0.3);
+          background: linear-gradient(145deg, rgba(88, 0, 25, 0.2), rgba(16, 16, 19, 0.9));
+        }
+
+        .statIcon {
+          width: 38px;
+          height: 38px;
+          border-radius: 9px;
+          background: rgba(255, 255, 255, 0.045);
+          display: grid;
+          place-items: center;
+          color: #b7003c;
+        }
+
+        .statCard span,
+        .statCard small {
+          display: block;
+          color: #73737b;
+          font-size: 10px;
+        }
+
+        .statCard strong {
+          display: block;
+          font-size: 22px;
+          margin: 3px 0;
+        }
+
+        .statCard small {
+          color: #4f9e70;
+        }
+
+        .workspace {
+          margin-bottom: 38px;
+        }
+
+        .sectionHeader {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          margin-bottom: 15px;
+        }
+
+        h3 {
+          font-size: 18px;
+          margin: 5px 0 0;
+          letter-spacing: -0.4px;
+        }
+
+        .searchPanel {
+          padding: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(14, 14, 17, 0.9);
+          border-radius: 13px;
+          display: grid;
+          grid-template-columns: 1fr 220px 175px;
+          gap: 10px;
+        }
+
+        .searchField,
+        .searchPanel select {
+          height: 48px;
+          border-radius: 9px;
+          border: 1px solid rgba(255, 255, 255, 0.07);
+          background: #0b0b0e;
+          color: #c8c8cd;
+        }
+
+        .searchField {
+          display: flex;
+          align-items: center;
+          padding: 0 14px;
+          color: #65656c;
+        }
+
+        .searchField input {
+          flex: 1;
+          background: transparent;
+          border: 0;
+          outline: 0;
+          color: white;
+          padding-left: 10px;
+          font-size: 12px;
+        }
+
+        .searchPanel select {
+          padding: 0 12px;
+          outline: none;
+        }
+
+        .searchButton {
+          border: 0;
+          border-radius: 9px;
+          background: linear-gradient(135deg, #a80038, #710025);
+          color: white;
+          font-size: 11px;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 7px;
+          cursor: pointer;
+          box-shadow: 0 7px 25px rgba(120, 0, 40, 0.2);
+          transition: 0.2s;
+        }
+
+        .searchButton:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 10px 30px rgba(160, 0, 50, 0.28);
+        }
+
+        .viewAll {
+          background: transparent;
+          border: 0;
+          color: #8b8b92;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 11px;
+          cursor: pointer;
+        }
+
+        .leadsList {
+          display: flex;
+          flex-direction: column;
+          gap: 9px;
+        }
+
+        .leadCard {
+          min-height: 82px;
+          padding: 12px 15px;
+          border: 1px solid rgba(255, 255, 255, 0.065);
+          background: rgba(14, 14, 17, 0.78);
+          border-radius: 12px;
+          display: grid;
+          grid-template-columns: 45px minmax(220px, 1fr) 135px 70px 180px;
+          gap: 15px;
+          align-items: center;
+          transition: 0.2s ease;
+        }
+
+        .leadCard:hover {
+          border-color: rgba(180, 0, 50, 0.25);
+          background: rgba(23, 14, 18, 0.9);
+          transform: translateX(2px);
+        }
+
+        .leadAvatar {
+          width: 43px;
+          height: 43px;
+          border-radius: 11px;
+          display: grid;
+          place-items: center;
+          background: linear-gradient(145deg, #6d0022, #21000a);
+          border: 1px solid rgba(220, 0, 60, 0.2);
+          font-weight: 700;
+          color: #ff6387;
+        }
+
+        .leadTitle {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .leadTitle h4 {
+          margin: 0;
+          font-size: 13px;
+        }
+
+        .priority {
+          font-size: 7px;
+          letter-spacing: 1px;
+          padding: 4px 6px;
+          border-radius: 4px;
+          font-weight: 800;
+        }
+
+        .priority.high {
+          color: #ff537d;
+          background: rgba(180, 0, 55, 0.14);
+        }
+
+        .priority.medium {
+          color: #d4a85d;
+          background: rgba(180, 130, 0, 0.1);
+        }
+
+        .priority.low {
+          color: #7f8790;
+          background: rgba(255, 255, 255, 0.05);
+        }
+
+        .leadMeta {
+          display: flex;
+          gap: 12px;
+          margin-top: 7px;
+          color: #66666e;
+          font-size: 9px;
+        }
+
+        .leadMeta span {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .leadWebsite span,
+        .leadWebsite strong {
+          display: block;
+        }
+
+        .leadWebsite span {
+          color: #5d5d64;
+          font-size: 9px;
+        }
+
+        .leadWebsite strong {
+          font-size: 10px;
+          margin-top: 4px;
+        }
+
+        .leadWebsite .no {
+          color: #e24c70;
+        }
+
+        .leadWebsite .yes {
+          color: #58b87c;
+        }
+
+        .score {
+          text-align: center;
+          border-left: 1px solid rgba(255, 255, 255, 0.06);
+          padding-left: 15px;
+        }
+
+        .score span {
+          display: block;
+          font-size: 7px;
+          color: #5e5e65;
+          letter-spacing: 1.5px;
+        }
+
+        .score strong {
+          color: #ff315f;
+          font-size: 19px;
+        }
+
+        .leadActions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 6px;
+        }
+
+        .smallButton {
+          height: 32px;
+          border-radius: 7px;
+          border: 1px solid rgba(255, 255, 255, 0.07);
+          background: #111114;
+          color: #8b8b91;
+          padding: 0 9px;
+          font-size: 9px;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          cursor: pointer;
+        }
+
+        .smallButton.primary {
+          background: rgba(150, 0, 45, 0.16);
+          color: #ef426b;
+          border-color: rgba(180, 0, 55, 0.2);
+        }
+
+        @media (max-width: 1100px) {
+          .sidebar {
+            width: 210px;
+          }
+
+          .content {
+            padding: 30px;
+          }
+
+          .statsGrid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          .leadCard {
+            grid-template-columns: 45px 1fr 100px;
+          }
+
+          .leadWebsite,
+          .leadActions {
+            display: none;
+          }
+        }
+
+        @media (max-width: 760px) {
+          .sidebar {
+            display: none;
+          }
+
+          .content {
+            padding: 22px 16px 50px;
+          }
+
+          .hero {
+            padding: 28px;
+          }
+
+          .heroSymbol {
+            display: none;
+          }
+
+          .statsGrid {
+            grid-template-columns: 1fr 1fr;
+          }
+
+          .searchPanel {
+            grid-template-columns: 1fr;
+          }
+
+          .leadCard {
+            grid-template-columns: 42px 1fr 55px;
+          }
+
+          .score {
+            border-left: 0;
+            padding: 0;
+          }
+
+          .leadMeta {
+            flex-wrap: wrap;
+          }
+        }
+      `}</style>
     </main>
   );
 }
