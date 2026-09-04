@@ -13,6 +13,11 @@ import {
   MapPin,
   Instagram,
   MoreHorizontal,
+  X,
+  Camera,
+  Globe,
+  Check,
+  AlertCircle,
 } from "lucide-react";
 
 const leads = [
@@ -22,6 +27,7 @@ const leads = [
     score: 92,
     website: false,
     photos: 28,
+    instagram: "@anamartins",
   },
   {
     name: "Bella Andrade",
@@ -29,6 +35,7 @@ const leads = [
     score: 84,
     website: false,
     photos: 19,
+    instagram: "@bellaandrade",
   },
   {
     name: "Laura Costa",
@@ -36,6 +43,7 @@ const leads = [
     score: 76,
     website: false,
     photos: 15,
+    instagram: "@lauracosta",
   },
   {
     name: "Maya Oliveira",
@@ -43,6 +51,7 @@ const leads = [
     score: 68,
     website: true,
     photos: 12,
+    instagram: "@mayaoliveira",
   },
 ];
 
@@ -54,6 +63,9 @@ function scoreClass(score: number) {
 
 export default function Home() {
   const [search, setSearch] = useState("");
+  const [selectedLead, setSelectedLead] = useState<(typeof leads)[number] | null>(
+    null
+  );
 
   const filteredLeads = leads.filter((lead) =>
     `${lead.name} ${lead.city}`
@@ -293,7 +305,10 @@ export default function Home() {
                       Instagram
                     </span>
 
-                    <span>{lead.photos} fotos</span>
+                    <span>
+                      <Camera size={13} />
+                      {lead.photos} fotos
+                    </span>
                   </div>
                 </div>
 
@@ -311,12 +326,18 @@ export default function Home() {
                 </div>
 
                 <div className="leadActions">
-                  <button className="smallButton">
+                  <button
+                    className="smallButton"
+                    onClick={() => setSelectedLead(lead)}
+                  >
                     <ExternalLink size={15} />
                     Perfil
                   </button>
 
-                  <button className="smallButton primary">
+                  <button
+                    className="smallButton primary"
+                    onClick={() => setSelectedLead(lead)}
+                  >
                     Interessante
                   </button>
                 </div>
@@ -325,6 +346,147 @@ export default function Home() {
           </div>
         </section>
       </section>
+
+      {selectedLead && (
+        <>
+          <div
+            className="leadOverlay"
+            onClick={() => setSelectedLead(null)}
+          />
+
+          <aside className="leadDrawer">
+            <div className="drawerHeader">
+              <div>
+                <span className="eyebrow">DETALHES DO LEAD</span>
+                <h2>{selectedLead.name}</h2>
+              </div>
+
+              <button
+                className="drawerClose"
+                onClick={() => setSelectedLead(null)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="drawerProfile">
+              <div className="drawerAvatar">
+                {selectedLead.name.charAt(0)}
+              </div>
+
+              <div>
+                <strong>{selectedLead.name}</strong>
+
+                <span>
+                  <MapPin size={14} />
+                  {selectedLead.city}
+                </span>
+              </div>
+            </div>
+
+            <div className="drawerScore">
+              <div>
+                <span>SCORE DE OPORTUNIDADE</span>
+                <strong>{selectedLead.score}</strong>
+              </div>
+
+              <div className={`drawerScoreBadge ${scoreClass(selectedLead.score)}`}>
+                {selectedLead.score >= 85
+                  ? "ALTA PRIORIDADE"
+                  : "BOA OPORTUNIDADE"}
+              </div>
+            </div>
+
+            <div className="drawerSection">
+              <span className="drawerLabel">PRESENÇA DIGITAL</span>
+
+              <div className="infoRow">
+                <span>
+                  <Instagram size={16} />
+                  Instagram
+                </span>
+
+                <strong>{selectedLead.instagram}</strong>
+              </div>
+
+              <div className="infoRow">
+                <span>
+                  <Globe size={16} />
+                  Site próprio
+                </span>
+
+                <strong className={selectedLead.website ? "yes" : "no"}>
+                  {selectedLead.website
+                    ? "Identificado"
+                    : "Não identificado"}
+                </strong>
+              </div>
+
+              <div className="infoRow">
+                <span>
+                  <Camera size={16} />
+                  Fotos
+                </span>
+
+                <strong>{selectedLead.photos}</strong>
+              </div>
+            </div>
+
+            <div className="drawerSection">
+              <span className="drawerLabel">POR QUE ESTE LEAD?</span>
+
+              <div className="reason">
+                <Check size={15} />
+                Perfil com presença digital
+              </div>
+
+              <div className="reason">
+                <Check size={15} />
+                Instagram identificado
+              </div>
+
+              <div className="reason">
+                <Check size={15} />
+                {selectedLead.photos} fotos no perfil
+              </div>
+
+              {!selectedLead.website && (
+                <div className="reason">
+                  <Check size={15} />
+                  Sem site próprio identificado
+                </div>
+              )}
+            </div>
+
+            <div className="drawerActions">
+              <button className="drawerButton">
+                <ExternalLink size={17} />
+                Abrir perfil
+              </button>
+
+              <button className="drawerButton whatsapp">
+                <MessageCircle size={17} />
+                WhatsApp
+              </button>
+
+              <button className="drawerButton">
+                <Instagram size={17} />
+                Instagram
+              </button>
+
+              <button className="drawerButton favorite">
+                <Flame size={17} />
+                Marcar como interessante
+              </button>
+            </div>
+
+            <div className="drawerFooter">
+              <AlertCircle size={15} />
+              O EscarlateFinder não envia mensagens automaticamente.
+            </div>
+          </aside>
+        </>
+      )}
     </main>
   );
 }
