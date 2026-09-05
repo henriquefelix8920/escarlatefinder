@@ -21,49 +21,7 @@ import {
   Phone,
 } from "lucide-react";
 
-type Lead = {
-  name: string;
-  city: string;
-  score: number;
-  website: boolean;
-  photos: number;
-  instagram: string;
-};
-
-const leads: Lead[] = [
-  {
-    name: "Ana Martins",
-    city: "Uberlândia",
-    score: 92,
-    website: false,
-    photos: 28,
-    instagram: "@anamartins",
-  },
-  {
-    name: "Bella Andrade",
-    city: "Uberaba",
-    score: 84,
-    website: false,
-    photos: 19,
-    instagram: "@bellaandrade",
-  },
-  {
-    name: "Laura Costa",
-    city: "Franca",
-    score: 76,
-    website: false,
-    photos: 15,
-    instagram: "@lauracosta",
-  },
-  {
-    name: "Maya Oliveira",
-    city: "Ribeirão Preto",
-    score: 68,
-    website: true,
-    photos: 12,
-    instagram: "@mayaoliveira",
-  },
-];
+import { leads, Lead } from "./lib/leads";
 
 function scoreClass(score: number) {
   if (score >= 85) return "high";
@@ -74,7 +32,6 @@ function scoreClass(score: number) {
 export default function Home() {
   const [search, setSearch] = useState("");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [whatsapp, setWhatsapp] = useState("");
   const [approachedLeads, setApproachedLeads] = useState<string[]>([]);
 
   const filteredLeads = leads.filter((lead) =>
@@ -84,40 +41,33 @@ export default function Home() {
   );
 
   const isApproached = selectedLead
-    ? approachedLeads.includes(selectedLead.name)
+    ? approachedLeads.includes(selectedLead.id)
     : false;
 
   function openLead(lead: Lead) {
     setSelectedLead(lead);
-    setWhatsapp("");
   }
 
   function closeDrawer() {
     setSelectedLead(null);
-    setWhatsapp("");
   }
 
   function handleWhatsApp() {
-    const digits = whatsapp.replace(/\D/g, "");
-
-    if (!digits) {
+    if (!selectedLead?.whatsapp) {
       alert(
-        "Digite o número de WhatsApp disponibilizado publicamente pela lead."
+        "O WhatsApp desta lead ainda não foi identificado publicamente."
       );
       return;
     }
 
-    if (digits.length < 10) {
-      alert("Confira o número de WhatsApp antes de continuar.");
-      return;
-    }
+    const digits = selectedLead.whatsapp.replace(/\D/g, "");
 
     window.open(`https://wa.me/${digits}`, "_blank");
 
-    if (selectedLead && !approachedLeads.includes(selectedLead.name)) {
+    if (!approachedLeads.includes(selectedLead.id)) {
       setApproachedLeads((current) => [
         ...current,
-        selectedLead.name,
+        selectedLead.id,
       ]);
     }
   }
@@ -151,13 +101,13 @@ export default function Home() {
           <button className="navItem">
             <Users size={18} />
             Leads
-            <span className="navBadge">127</span>
+            <span className="navBadge">{leads.length}</span>
           </button>
 
           <button className="navItem">
             <Flame size={18} />
             Interessantes
-            <span className="navBadge">34</span>
+            <span className="navBadge">0</span>
           </button>
 
           <button className="navItem">
@@ -198,7 +148,10 @@ export default function Home() {
       <section className="content">
         <header className="topbar">
           <div>
-            <span className="eyebrow">CENTRAL DE PROSPECÇÃO</span>
+            <span className="eyebrow">
+              CENTRAL DE PROSPECÇÃO
+            </span>
+
             <h1>Dashboard</h1>
           </div>
 
@@ -228,8 +181,9 @@ export default function Home() {
             </h2>
 
             <p>
-              Descubra profissionais, identifique oportunidades digitais e
-              organize seus melhores leads em um único lugar.
+              Descubra profissionais, identifique oportunidades
+              digitais e organize seus melhores leads em um único
+              lugar.
             </p>
           </div>
 
@@ -248,8 +202,8 @@ export default function Home() {
 
             <div>
               <span>Leads encontrados</span>
-              <strong>127</strong>
-              <small>+18 esta semana</small>
+              <strong>{leads.length}</strong>
+              <small>base atual</small>
             </div>
           </div>
 
@@ -260,8 +214,12 @@ export default function Home() {
 
             <div>
               <span>Alta prioridade</span>
-              <strong>34</strong>
-              <small>27% dos leads</small>
+
+              <strong>
+                {leads.filter((lead) => lead.score >= 85).length}
+              </strong>
+
+              <small>score acima de 85</small>
             </div>
           </div>
 
@@ -272,7 +230,9 @@ export default function Home() {
 
             <div>
               <span>Abordados</span>
+
               <strong>{approachedLeads.length}</strong>
+
               <small>sessão atual</small>
             </div>
           </div>
@@ -283,9 +243,13 @@ export default function Home() {
             </div>
 
             <div>
-              <span>Pipeline potencial</span>
-              <strong>R$ 4.985</strong>
-              <small>5 oportunidades</small>
+              <span>Com WhatsApp</span>
+
+              <strong>
+                {leads.filter((lead) => lead.whatsapp).length}
+              </strong>
+
+              <small>identificados</small>
             </div>
           </div>
         </section>
@@ -311,9 +275,7 @@ export default function Home() {
 
             <select defaultValue="todas">
               <option value="todas">Todas as fontes</option>
-              <option>Vitrine</option>
-              <option>JobModel</option>
-              <option>OfertaHot</option>
+              <option>Demonstração</option>
             </select>
 
             <button className="searchButton">
@@ -338,10 +300,12 @@ export default function Home() {
 
           <div className="leadsList">
             {filteredLeads.map((lead) => {
-              const approached = approachedLeads.includes(lead.name);
+              const approached = approachedLeads.includes(
+                lead.id
+              );
 
               return (
-                <article className="leadCard" key={lead.name}>
+                <article className="leadCard" key={lead.id}>
                   <div className="leadAvatar">
                     {lead.name.charAt(0)}
                   </div>
@@ -481,8 +445,10 @@ export default function Home() {
             {isApproached && (
               <div className="approachedStatus">
                 <Check size={16} />
+
                 <div>
                   <strong>Lead abordado</strong>
+
                   <span>
                     Você já abriu o contato pelo WhatsApp.
                   </span>
@@ -561,27 +527,42 @@ export default function Home() {
 
             <div className="whatsappBox">
               <span className="drawerLabel">
-                CONTATO MANUAL
+                CONTATO
               </span>
 
-              <div className="phoneInput">
-                <Phone size={16} />
+              {selectedLead.whatsapp ? (
+                <>
+                  <div className="phoneInput">
+                    <Phone size={16} />
 
-                <input
-                  type="tel"
-                  placeholder="DDD + número do WhatsApp"
-                  value={whatsapp}
-                  onChange={(e) =>
-                    setWhatsapp(e.target.value)
-                  }
-                />
-              </div>
+                    <input
+                      type="tel"
+                      value={selectedLead.whatsapp}
+                      readOnly
+                    />
+                  </div>
 
-              <p>
-                Use somente um número de WhatsApp que a
-                própria profissional tenha disponibilizado
-                publicamente.
-              </p>
+                  <p>
+                    Número disponibilizado publicamente pela
+                    própria lead.
+                  </p>
+                </>
+              ) : (
+                <div className="noWhatsapp">
+                  <AlertCircle size={17} />
+
+                  <div>
+                    <strong>
+                      WhatsApp não identificado
+                    </strong>
+
+                    <span>
+                      Nenhum número público foi encontrado para
+                      esta lead.
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="drawerActions">
@@ -593,6 +574,7 @@ export default function Home() {
               <button
                 className="drawerButton whatsapp"
                 onClick={handleWhatsApp}
+                disabled={!selectedLead.whatsapp}
               >
                 <MessageCircle size={17} />
                 Abrir WhatsApp
