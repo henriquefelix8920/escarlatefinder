@@ -18,9 +18,19 @@ import {
   Globe,
   Check,
   AlertCircle,
+  Phone,
 } from "lucide-react";
 
-const leads = [
+type Lead = {
+  name: string;
+  city: string;
+  score: number;
+  website: boolean;
+  photos: number;
+  instagram: string;
+};
+
+const leads: Lead[] = [
   {
     name: "Ana Martins",
     city: "Uberlândia",
@@ -63,15 +73,60 @@ function scoreClass(score: number) {
 
 export default function Home() {
   const [search, setSearch] = useState("");
-  const [selectedLead, setSelectedLead] = useState<(typeof leads)[number] | null>(
-    null
-  );
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [whatsapp, setWhatsapp] = useState("");
+  const [approachedLeads, setApproachedLeads] = useState<string[]>([]);
 
   const filteredLeads = leads.filter((lead) =>
     `${lead.name} ${lead.city}`
       .toLowerCase()
       .includes(search.toLowerCase())
   );
+
+  const isApproached = selectedLead
+    ? approachedLeads.includes(selectedLead.name)
+    : false;
+
+  function openLead(lead: Lead) {
+    setSelectedLead(lead);
+    setWhatsapp("");
+  }
+
+  function closeDrawer() {
+    setSelectedLead(null);
+    setWhatsapp("");
+  }
+
+  function handleWhatsApp() {
+    const digits = whatsapp.replace(/\D/g, "");
+
+    if (!digits) {
+      alert(
+        "Digite o número de WhatsApp disponibilizado publicamente pela lead."
+      );
+      return;
+    }
+
+    if (digits.length < 10) {
+      alert("Confira o número de WhatsApp antes de continuar.");
+      return;
+    }
+
+    window.open(`https://wa.me/${digits}`, "_blank");
+
+    if (selectedLead && !approachedLeads.includes(selectedLead.name)) {
+      setApproachedLeads((current) => [
+        ...current,
+        selectedLead.name,
+      ]);
+    }
+  }
+
+  function markInteresting() {
+    if (!selectedLead) return;
+
+    alert(`${selectedLead.name} foi marcada como interessante.`);
+  }
 
   return (
     <main className="dashboard">
@@ -108,6 +163,11 @@ export default function Home() {
           <button className="navItem">
             <MessageCircle size={18} />
             Abordados
+            {approachedLeads.length > 0 && (
+              <span className="navBadge">
+                {approachedLeads.length}
+              </span>
+            )}
           </button>
         </div>
 
@@ -212,8 +272,8 @@ export default function Home() {
 
             <div>
               <span>Abordados</span>
-              <strong>17</strong>
-              <small>6 responderam</small>
+              <strong>{approachedLeads.length}</strong>
+              <small>sessão atual</small>
             </div>
           </div>
 
@@ -277,72 +337,86 @@ export default function Home() {
           </div>
 
           <div className="leadsList">
-            {filteredLeads.map((lead) => (
-              <article className="leadCard" key={lead.name}>
-                <div className="leadAvatar">
-                  {lead.name.charAt(0)}
-                </div>
+            {filteredLeads.map((lead) => {
+              const approached = approachedLeads.includes(lead.name);
 
-                <div className="leadMain">
-                  <div className="leadTitle">
-                    <h4>{lead.name}</h4>
-
-                    <span className={`priority ${scoreClass(lead.score)}`}>
-                      {lead.score >= 85
-                        ? "ALTA PRIORIDADE"
-                        : "BOA OPORTUNIDADE"}
-                    </span>
+              return (
+                <article className="leadCard" key={lead.name}>
+                  <div className="leadAvatar">
+                    {lead.name.charAt(0)}
                   </div>
 
-                  <div className="leadMeta">
-                    <span>
-                      <MapPin size={13} />
-                      {lead.city}
-                    </span>
+                  <div className="leadMain">
+                    <div className="leadTitle">
+                      <h4>{lead.name}</h4>
 
-                    <span>
-                      <Instagram size={13} />
-                      Instagram
-                    </span>
+                      <span
+                        className={`priority ${scoreClass(
+                          lead.score
+                        )}`}
+                      >
+                        {approached
+                          ? "ABORDADO"
+                          : lead.score >= 85
+                          ? "ALTA PRIORIDADE"
+                          : "BOA OPORTUNIDADE"}
+                      </span>
+                    </div>
 
-                    <span>
-                      <Camera size={13} />
-                      {lead.photos} fotos
-                    </span>
+                    <div className="leadMeta">
+                      <span>
+                        <MapPin size={13} />
+                        {lead.city}
+                      </span>
+
+                      <span>
+                        <Instagram size={13} />
+                        Instagram
+                      </span>
+
+                      <span>
+                        <Camera size={13} />
+                        {lead.photos} fotos
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="leadWebsite">
-                  <span>Site próprio</span>
+                  <div className="leadWebsite">
+                    <span>Site próprio</span>
 
-                  <strong className={lead.website ? "yes" : "no"}>
-                    {lead.website ? "Identificado" : "Não identificado"}
-                  </strong>
-                </div>
+                    <strong
+                      className={lead.website ? "yes" : "no"}
+                    >
+                      {lead.website
+                        ? "Identificado"
+                        : "Não identificado"}
+                    </strong>
+                  </div>
 
-                <div className="score">
-                  <span>SCORE</span>
-                  <strong>{lead.score}</strong>
-                </div>
+                  <div className="score">
+                    <span>SCORE</span>
+                    <strong>{lead.score}</strong>
+                  </div>
 
-                <div className="leadActions">
-                  <button
-                    className="smallButton"
-                    onClick={() => setSelectedLead(lead)}
-                  >
-                    <ExternalLink size={15} />
-                    Perfil
-                  </button>
+                  <div className="leadActions">
+                    <button
+                      className="smallButton"
+                      onClick={() => openLead(lead)}
+                    >
+                      <ExternalLink size={15} />
+                      Perfil
+                    </button>
 
-                  <button
-                    className="smallButton primary"
-                    onClick={() => setSelectedLead(lead)}
-                  >
-                    Interessante
-                  </button>
-                </div>
-              </article>
-            ))}
+                    <button
+                      className="smallButton primary"
+                      onClick={() => openLead(lead)}
+                    >
+                      Interessante
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
       </section>
@@ -351,19 +425,22 @@ export default function Home() {
         <>
           <div
             className="leadOverlay"
-            onClick={() => setSelectedLead(null)}
+            onClick={closeDrawer}
           />
 
           <aside className="leadDrawer">
             <div className="drawerHeader">
               <div>
-                <span className="eyebrow">DETALHES DO LEAD</span>
+                <span className="eyebrow">
+                  DETALHES DO LEAD
+                </span>
+
                 <h2>{selectedLead.name}</h2>
               </div>
 
               <button
                 className="drawerClose"
-                onClick={() => setSelectedLead(null)}
+                onClick={closeDrawer}
               >
                 <X size={20} />
               </button>
@@ -390,15 +467,33 @@ export default function Home() {
                 <strong>{selectedLead.score}</strong>
               </div>
 
-              <div className={`drawerScoreBadge ${scoreClass(selectedLead.score)}`}>
+              <div
+                className={`drawerScoreBadge ${scoreClass(
+                  selectedLead.score
+                )}`}
+              >
                 {selectedLead.score >= 85
                   ? "ALTA PRIORIDADE"
                   : "BOA OPORTUNIDADE"}
               </div>
             </div>
 
+            {isApproached && (
+              <div className="approachedStatus">
+                <Check size={16} />
+                <div>
+                  <strong>Lead abordado</strong>
+                  <span>
+                    Você já abriu o contato pelo WhatsApp.
+                  </span>
+                </div>
+              </div>
+            )}
+
             <div className="drawerSection">
-              <span className="drawerLabel">PRESENÇA DIGITAL</span>
+              <span className="drawerLabel">
+                PRESENÇA DIGITAL
+              </span>
 
               <div className="infoRow">
                 <span>
@@ -415,7 +510,11 @@ export default function Home() {
                   Site próprio
                 </span>
 
-                <strong className={selectedLead.website ? "yes" : "no"}>
+                <strong
+                  className={
+                    selectedLead.website ? "yes" : "no"
+                  }
+                >
                   {selectedLead.website
                     ? "Identificado"
                     : "Não identificado"}
@@ -433,7 +532,9 @@ export default function Home() {
             </div>
 
             <div className="drawerSection">
-              <span className="drawerLabel">POR QUE ESTE LEAD?</span>
+              <span className="drawerLabel">
+                POR QUE ESTE LEAD?
+              </span>
 
               <div className="reason">
                 <Check size={15} />
@@ -458,15 +559,43 @@ export default function Home() {
               )}
             </div>
 
+            <div className="whatsappBox">
+              <span className="drawerLabel">
+                CONTATO MANUAL
+              </span>
+
+              <div className="phoneInput">
+                <Phone size={16} />
+
+                <input
+                  type="tel"
+                  placeholder="DDD + número do WhatsApp"
+                  value={whatsapp}
+                  onChange={(e) =>
+                    setWhatsapp(e.target.value)
+                  }
+                />
+              </div>
+
+              <p>
+                Use somente um número de WhatsApp que a
+                própria profissional tenha disponibilizado
+                publicamente.
+              </p>
+            </div>
+
             <div className="drawerActions">
               <button className="drawerButton">
                 <ExternalLink size={17} />
                 Abrir perfil
               </button>
 
-              <button className="drawerButton whatsapp">
+              <button
+                className="drawerButton whatsapp"
+                onClick={handleWhatsApp}
+              >
                 <MessageCircle size={17} />
-                WhatsApp
+                Abrir WhatsApp
               </button>
 
               <button className="drawerButton">
@@ -474,7 +603,10 @@ export default function Home() {
                 Instagram
               </button>
 
-              <button className="drawerButton favorite">
+              <button
+                className="drawerButton favorite"
+                onClick={markInteresting}
+              >
                 <Flame size={17} />
                 Marcar como interessante
               </button>
@@ -482,7 +614,12 @@ export default function Home() {
 
             <div className="drawerFooter">
               <AlertCircle size={15} />
-              O EscarlateFinder não envia mensagens automaticamente.
+
+              <span>
+                O EscarlateFinder não envia mensagens
+                automaticamente. A conversa é sempre iniciada
+                manualmente por você.
+              </span>
             </div>
           </aside>
         </>
