@@ -46,8 +46,6 @@ button {
   overflow: hidden;
 }
 
-/* SIDEBAR */
-
 .sidebar {
   width: 250px;
   min-height: 100vh;
@@ -169,8 +167,6 @@ button {
   margin-top: 3px;
 }
 
-/* CONTENT */
-
 .content {
   flex: 1;
   padding: 34px 48px 70px;
@@ -233,8 +229,6 @@ h1 {
   background: #111114;
   color: #888890;
 }
-
-/* HERO */
 
 .hero {
   min-height: 250px;
@@ -330,8 +324,6 @@ h1 {
   }
 }
 
-/* STATS */
-
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -384,8 +376,6 @@ h1 {
 .statCard small {
   color: #4f9e70;
 }
-
-/* SEARCH */
 
 .workspace {
   margin-bottom: 38px;
@@ -474,8 +464,6 @@ h3 {
   gap: 4px;
   font-size: 11px;
 }
-
-/* LEADS */
 
 .leadsList {
   display: flex;
@@ -633,69 +621,6 @@ h3 {
   border-color: rgba(180, 0, 55, 0.2);
 }
 
-/* RESPONSIVE */
-
-@media (max-width: 1100px) {
-  .sidebar {
-    width: 210px;
-  }
-
-  .content {
-    padding: 30px;
-  }
-
-  .statsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .leadCard {
-    grid-template-columns: 45px 1fr 100px;
-  }
-
-  .leadWebsite,
-  .leadActions {
-    display: none;
-  }
-}
-
-@media (max-width: 760px) {
-  .sidebar {
-    display: none;
-  }
-
-  .content {
-    padding: 22px 16px 50px;
-  }
-
-  .hero {
-    padding: 28px;
-  }
-
-  .heroSymbol {
-    display: none;
-  }
-
-  .statsGrid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .searchPanel {
-    grid-template-columns: 1fr;
-  }
-
-  .leadCard {
-    grid-template-columns: 42px 1fr 55px;
-  }
-
-  .score {
-    border-left: 0;
-    padding: 0;
-  }
-
-  .leadMeta {
-    flex-wrap: wrap;
-  }
-}
 /* LEAD DRAWER */
 
 .leadOverlay {
@@ -800,8 +725,6 @@ h3 {
   font-size: 11px;
 }
 
-/* SCORE */
-
 .drawerScore {
   margin-top: 20px;
   padding: 18px;
@@ -857,7 +780,29 @@ h3 {
   background: rgba(255, 255, 255, 0.05);
 }
 
-/* SECTIONS */
+.approachedStatus {
+  margin-top: 14px;
+  padding: 12px 13px;
+  border-radius: 9px;
+  background: rgba(50, 160, 100, 0.08);
+  border: 1px solid rgba(70, 190, 120, 0.14);
+  color: #64c98e;
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+}
+
+.approachedStatus strong {
+  display: block;
+  font-size: 10px;
+}
+
+.approachedStatus span {
+  display: block;
+  margin-top: 3px;
+  color: #6d8e7b;
+  font-size: 9px;
+}
 
 .drawerSection {
   padding: 24px 0;
@@ -903,8 +848,6 @@ h3 {
   color: #58b87c;
 }
 
-/* REASONS */
-
 .reason {
   display: flex;
   align-items: center;
@@ -919,7 +862,48 @@ h3 {
   flex-shrink: 0;
 }
 
-/* ACTIONS */
+/* WHATSAPP */
+
+.whatsappBox {
+  padding: 24px 0 0;
+}
+
+.phoneInput {
+  height: 45px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #111114;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  color: #77777f;
+}
+
+.phoneInput:focus-within {
+  border-color: rgba(190, 0, 55, 0.4);
+  box-shadow: 0 0 0 3px rgba(150, 0, 45, 0.08);
+}
+
+.phoneInput input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: white;
+  font-size: 11px;
+}
+
+.phoneInput input::placeholder {
+  color: #55555d;
+}
+
+.whatsappBox p {
+  margin-top: 8px;
+  color: #595961;
+  font-size: 8px;
+  line-height: 1.5;
+}
 
 .drawerActions {
   padding-top: 24px;
@@ -985,8 +969,6 @@ h3 {
   color: #77777f;
 }
 
-/* ANIMATIONS */
-
 @keyframes drawerIn {
   from {
     transform: translateX(100%);
@@ -1009,7 +991,67 @@ h3 {
   }
 }
 
-/* MOBILE */
+@media (max-width: 1100px) {
+  .sidebar {
+    width: 210px;
+  }
+
+  .content {
+    padding: 30px;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .leadCard {
+    grid-template-columns: 45px 1fr 100px;
+  }
+
+  .leadWebsite,
+  .leadActions {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .sidebar {
+    display: none;
+  }
+
+  .content {
+    padding: 22px 16px 50px;
+  }
+
+  .hero {
+    padding: 28px;
+  }
+
+  .heroSymbol {
+    display: none;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .searchPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .leadCard {
+    grid-template-columns: 42px 1fr 55px;
+  }
+
+  .score {
+    border-left: 0;
+    padding: 0;
+  }
+
+  .leadMeta {
+    flex-wrap: wrap;
+  }
+}
 
 @media (max-width: 600px) {
   .leadDrawer {
