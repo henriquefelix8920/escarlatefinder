@@ -115,7 +115,7 @@ export default function SourcesPage() {
             const status = statusInfo(source.status);
             const type = typeInfo(source.type);
 
-            const isDemo = source.id === "demo";
+            const isDemo = source.status === "demo";
 
             return (
               <article
@@ -164,9 +164,6 @@ export default function SourcesPage() {
                     <Link
                       href="/sources/demo"
                       className="sourceButton"
-                      style={{
-                        textDecoration: "none",
-                      }}
                     >
                       <ExternalLink size={15} />
                       Abrir fonte
