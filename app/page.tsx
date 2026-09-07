@@ -129,7 +129,12 @@ export default function Home() {
             Prospecção
           </button>
 
-          <button className="navItem">
+          <button
+            className="navItem"
+            onClick={() => {
+              window.location.href = "/sources";
+            }}
+          >
             <Instagram size={18} />
             Fontes
           </button>
