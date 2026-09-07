@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import {
   ArrowLeft,
   Database,
@@ -74,10 +76,10 @@ export default function SourcesPage() {
       <div className="sourcesContainer">
         <header className="sourcesHeader">
           <div>
-            <a href="/" className="backButton">
+            <Link href="/" className="backButton">
               <ArrowLeft size={16} />
               Voltar ao dashboard
-            </a>
+            </Link>
 
             <span className="eyebrow">
               ESCARLATEFINDER / SISTEMA
@@ -112,6 +114,8 @@ export default function SourcesPage() {
           {sources.map((source) => {
             const status = statusInfo(source.status);
             const type = typeInfo(source.type);
+
+            const isDemo = source.id === "demo";
 
             return (
               <article
@@ -156,15 +160,28 @@ export default function SourcesPage() {
                 </div>
 
                 <div className="sourceActions">
-                  <button
-                    className="sourceButton"
-                    disabled={
-                      source.status === "disabled"
-                    }
-                  >
-                    <ExternalLink size={15} />
-                    Abrir fonte
-                  </button>
+                  {isDemo ? (
+                    <Link
+                      href="/sources/demo"
+                      className="sourceButton"
+                      style={{
+                        textDecoration: "none",
+                      }}
+                    >
+                      <ExternalLink size={15} />
+                      Abrir fonte
+                    </Link>
+                  ) : (
+                    <button
+                      className="sourceButton"
+                      disabled={
+                        source.status === "disabled"
+                      }
+                    >
+                      <ExternalLink size={15} />
+                      Abrir fonte
+                    </button>
+                  )}
 
                   <button
                     className="sourceButton primary"
