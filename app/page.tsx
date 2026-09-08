@@ -124,7 +124,12 @@ export default function Home() {
         <div className="sidebarSection">
           <span className="sectionLabel">SISTEMA</span>
 
-          <button className="navItem">
+          <button
+            className="navItem"
+            onClick={() => {
+              window.location.href = "/prospect";
+            }}
+          >
             <Search size={18} />
             Prospecção
           </button>
