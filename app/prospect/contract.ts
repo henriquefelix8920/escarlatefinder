@@ -1,3 +1,24 @@
+export type ProspectQuery = {
+  city?: string;
+  category?: string;
+};
+
+export type PublicLead = {
+  id: string;
+  name: string;
+  city: string;
+  score: number;
+  instagram: string;
+  website: boolean;
+  photos: number;
+  whatsapp: string | null;
+};
+
+export type LeadSourceResult = {
+  leads: PublicLead[];
+  sourceName: string;
+};
+
 export type LeadSourceStatus =
   | "demo"
   | "available"
@@ -11,22 +32,7 @@ export type LeadSource = {
   status: LeadSourceStatus;
   type: "manual" | "public" | "api";
 
-  search: (query: {
-    city?: string;
-    category?: string;
-  }) => Promise<{
-    leads: PublicLead[];
-    sourceName: string;
-  }>;
-};
-
-export type PublicLead = {
-  id: string;
-  name: string;
-  city: string;
-  score: number;
-  instagram: string;
-  website: boolean;
-  photos: number;
-  whatsapp: string | null;
+  search: (
+    query: ProspectQuery
+  ) => Promise<LeadSourceResult>;
 };
