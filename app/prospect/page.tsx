@@ -10,6 +10,7 @@ import {
   Sparkles,
   Users,
   ChevronRight,
+  BriefcaseBusiness,
 } from "lucide-react";
 
 const demoResults = [
@@ -42,6 +43,29 @@ const demoResults = [
   },
 ];
 
+const categories = [
+  {
+    value: "profissionais",
+    label: "Profissionais independentes",
+  },
+  {
+    value: "fotografas",
+    label: "Fotógrafas",
+  },
+  {
+    value: "modelos",
+    label: "Modelos",
+  },
+  {
+    value: "beleza",
+    label: "Beleza e estética",
+  },
+  {
+    value: "outros",
+    label: "Outros",
+  },
+];
+
 function scoreClass(score: number) {
   if (score >= 85) return "high";
   if (score >= 70) return "medium";
@@ -50,11 +74,16 @@ function scoreClass(score: number) {
 
 export default function ProspectPage() {
   const [city, setCity] = useState("");
+  const [category, setCategory] = useState("profissionais");
   const [searched, setSearched] = useState(false);
 
   function handleSearch() {
     setSearched(true);
   }
+
+  const selectedCategory =
+    categories.find((item) => item.value === category)?.label ??
+    "Profissionais independentes";
 
   return (
     <main className="sourcesPage">
@@ -114,15 +143,33 @@ export default function ProspectPage() {
             />
           </div>
 
-          <select defaultValue="public">
-            <option value="public">
-              Fontes públicas
-            </option>
+          <div className="searchField">
+            <BriefcaseBusiness size={19} />
 
-            <option value="demo">
-              Demonstração
-            </option>
-          </select>
+            <select
+              value={category}
+              onChange={(event) =>
+                setCategory(event.target.value)
+              }
+              style={{
+                width: "100%",
+                background: "transparent",
+                border: "none",
+                outline: "none",
+                color: "inherit",
+                font: "inherit",
+              }}
+            >
+              {categories.map((item) => (
+                <option
+                  key={item.value}
+                  value={item.value}
+                >
+                  {item.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <button
             className="searchButton"
@@ -150,8 +197,8 @@ export default function ProspectPage() {
               <h2>Comece uma busca</h2>
 
               <p>
-                Digite uma cidade acima para iniciar uma
-                pesquisa de oportunidades.
+                Escolha uma cidade e um segmento para iniciar
+                uma pesquisa de oportunidades.
               </p>
 
               <div className="sourceMeta">
@@ -186,6 +233,16 @@ export default function ProspectPage() {
                   Oportunidades
                   {city ? ` em ${city}` : ""}
                 </h3>
+
+                <p
+                  style={{
+                    marginTop: "6px",
+                    color: "rgba(255,255,255,0.5)",
+                    fontSize: "13px",
+                  }}
+                >
+                  Segmento: {selectedCategory}
+                </p>
               </div>
 
               <span
@@ -277,9 +334,9 @@ export default function ProspectPage() {
           <Database size={15} />
 
           <span>
-            Nesta etapa estamos usando dados de demonstração.
-            O próximo estágio será conectar uma fonte pública
-            real ao mecanismo de prospecção.
+            {searched
+              ? "Busca em modo de demonstração. A próxima etapa será conectar o motor de fontes públicas."
+              : "Nesta etapa estamos usando dados de demonstração. O próximo estágio será conectar uma fonte pública real ao mecanismo de prospecção."}
           </span>
         </div>
       </div>
