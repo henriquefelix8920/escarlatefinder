@@ -1,32 +1,48 @@
-import type { LeadSource, ProspectQuery } from "../contract";
+import type {
+  LeadSource,
+  ProspectQuery,
+} from "../contract";
 
 export const listouAchouSource: LeadSource = {
   id: "listou-achou",
+
   name: "Listou Achou",
+
+  description:
+    "Fonte pública preparada para pesquisas de oportunidades.",
+
+  status: "available",
+
   type: "public",
 
   async search(query: ProspectQuery) {
-    const city = query.city.trim();
+    const city = (query.city ?? "").trim();
 
     if (!city) {
-      return [];
+      return {
+        leads: [],
+        sourceName: "Listou Achou",
+      };
     }
 
     /*
-     * PRIMEIRA VERSÃO DO ADAPTADOR
+     * ADAPTADOR DA FONTE
      *
-     * Nesta etapa não fazemos coleta automática.
-     * O adaptador apenas estabelece o ponto de integração
-     * entre o motor de prospecção e a fonte.
+     * Esta primeira versão ainda não realiza coleta
+     * automática.
      *
-     * A implementação de coleta será adicionada depois,
-     * respeitando as condições de uso da fonte.
+     * O objetivo aqui é manter o motor de prospecção
+     * separado da fonte, permitindo conectar a coleta
+     * real posteriormente.
      */
 
     console.log(
       `[EscarlateFinder] Busca solicitada no Listou Achou: ${city}`
     );
 
-    return [];
+    return {
+      leads: [],
+      sourceName: "Listou Achou",
+    };
   },
 };
