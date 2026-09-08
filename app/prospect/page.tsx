@@ -8,40 +8,15 @@ import {
   MapPin,
   Database,
   Sparkles,
-  Users,
   ChevronRight,
   BriefcaseBusiness,
+  Loader2,
 } from "lucide-react";
 
-const demoResults = [
-  {
-    id: "demo-1",
-    name: "Ana Martins",
-    city: "Uberlândia",
-    score: 92,
-    instagram: "@anamartins",
-    website: false,
-    photos: 28,
-  },
-  {
-    id: "demo-2",
-    name: "Beatriz Silva",
-    city: "Uberlândia",
-    score: 86,
-    instagram: "@beatrizsilva",
-    website: false,
-    photos: 21,
-  },
-  {
-    id: "demo-3",
-    name: "Camila Rocha",
-    city: "Uberlândia",
-    score: 78,
-    instagram: "@camilarocha",
-    website: false,
-    photos: 17,
-  },
-];
+import {
+  searchSources,
+  PublicLead,
+} from "../lib/sources";
 
 const categories = [
   {
@@ -74,23 +49,57 @@ function scoreClass(score: number) {
 
 export default function ProspectPage() {
   const [city, setCity] = useState("");
-  const [category, setCategory] = useState("profissionais");
-  const [searched, setSearched] = useState(false);
+  const [category, setCategory] =
+    useState("profissionais");
 
-  function handleSearch() {
-    setSearched(true);
+  const [searched, setSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [results, setResults] = useState<PublicLead[]>([]);
+
+  const [sourcesUsed, setSourcesUsed] =
+    useState<string[]>([]);
+
+  async function handleSearch() {
+    setLoading(true);
+
+    try {
+      const result = await searchSources({
+        city,
+        category,
+      });
+
+      setResults(result.leads);
+      setSourcesUsed(result.sourcesUsed);
+      setSearched(true);
+    } catch (error) {
+      console.error(
+        "Erro ao executar busca:",
+        error
+      );
+
+      setResults([]);
+      setSourcesUsed([]);
+      setSearched(true);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const selectedCategory =
-    categories.find((item) => item.value === category)?.label ??
-    "Profissionais independentes";
+    categories.find(
+      (item) => item.value === category
+    )?.label ?? "Profissionais independentes";
 
   return (
     <main className="sourcesPage">
       <div className="sourcesContainer">
         <header className="sourcesHeader">
           <div>
-            <Link href="/" className="backButton">
+            <Link
+              href="/"
+              className="backButton"
+            >
               <ArrowLeft size={16} />
               Voltar ao dashboard
             </Link>
@@ -102,9 +111,9 @@ export default function ProspectPage() {
             <h1>Encontrar leads</h1>
 
             <p>
-              Pesquise oportunidades e encontre profissionais
-              com presença digital, mas sem site próprio
-              identificado.
+              Pesquise oportunidades e encontre
+              profissionais com presença digital, mas
+              sem site próprio identificado.
             </p>
           </div>
         </header>
@@ -115,11 +124,14 @@ export default function ProspectPage() {
           </div>
 
           <div>
-            <strong>Central de prospecção</strong>
+            <strong>
+              Central de prospecção
+            </strong>
 
             <span>
-              Você pesquisa. O EscarlateFinder organiza.
-              A decisão de abordar continua sendo sua.
+              Você pesquisa. O EscarlateFinder
+              organiza. A decisão de abordar
+              continua sendo sua.
             </span>
           </div>
         </section>
@@ -149,7 +161,9 @@ export default function ProspectPage() {
             <select
               value={category}
               onChange={(event) =>
-                setCategory(event.target.value)
+                setCategory(
+                  event.target.value
+                )
               }
               style={{
                 width: "100%",
@@ -174,9 +188,22 @@ export default function ProspectPage() {
           <button
             className="searchButton"
             onClick={handleSearch}
+            disabled={loading}
           >
-            <Search size={18} />
-            Encontrar leads
+            {loading ? (
+              <>
+                <Loader2
+                  size={18}
+                  className="spin"
+                />
+                Pesquisando...
+              </>
+            ) : (
+              <>
+                <Search size={18} />
+                Encontrar leads
+              </>
+            )}
           </button>
         </section>
 
@@ -194,11 +221,14 @@ export default function ProspectPage() {
                 </div>
               </div>
 
-              <h2>Comece uma busca</h2>
+              <h2>
+                Comece uma busca
+              </h2>
 
               <p>
-                Escolha uma cidade e um segmento para iniciar
-                uma pesquisa de oportunidades.
+                Escolha uma cidade e um segmento
+                para iniciar uma pesquisa de
+                oportunidades.
               </p>
 
               <div className="sourceMeta">
@@ -231,32 +261,66 @@ export default function ProspectPage() {
 
                 <h3>
                   Oportunidades
-                  {city ? ` em ${city}` : ""}
+                  {city
+                    ? ` em ${city}`
+                    : ""}
                 </h3>
 
                 <p
                   style={{
                     marginTop: "6px",
-                    color: "rgba(255,255,255,0.5)",
+                    color:
+                      "rgba(255,255,255,0.5)",
                     fontSize: "13px",
                   }}
                 >
-                  Segmento: {selectedCategory}
+                  Segmento:{" "}
+                  {selectedCategory}
                 </p>
               </div>
 
               <span
                 style={{
-                  color: "rgba(255,255,255,0.5)",
+                  color:
+                    "rgba(255,255,255,0.5)",
                   fontSize: "13px",
                 }}
               >
-                {demoResults.length} encontrados
+                {results.length} encontrados
               </span>
             </div>
 
+            {sourcesUsed.length > 0 && (
+              <div
+                style={{
+                  marginBottom: "18px",
+                  color:
+                    "rgba(255,255,255,0.45)",
+                  fontSize: "12px",
+                }}
+              >
+                Fonte utilizada:{" "}
+                {sourcesUsed.join(", ")}
+              </div>
+            )}
+
+            {results.length === 0 && (
+              <div className="sourceCard">
+                <Database size={20} />
+
+                <h2>
+                  Nenhum lead encontrado
+                </h2>
+
+                <p>
+                  O motor não encontrou
+                  oportunidades para esta busca.
+                </p>
+              </div>
+            )}
+
             <div className="leadsList">
-              {demoResults.map((lead) => (
+              {results.map((lead) => (
                 <article
                   className="leadCard"
                   key={lead.id}
@@ -267,7 +331,9 @@ export default function ProspectPage() {
 
                   <div className="leadMain">
                     <div className="leadTitle">
-                      <h4>{lead.name}</h4>
+                      <h4>
+                        {lead.name}
+                      </h4>
 
                       <span
                         className={`priority ${scoreClass(
@@ -276,37 +342,58 @@ export default function ProspectPage() {
                       >
                         {lead.score >= 85
                           ? "ALTA PRIORIDADE"
-                          : "BOA OPORTUNIDADE"}
+                          : lead.score >=
+                            70
+                          ? "BOA OPORTUNIDADE"
+                          : "OPORTUNIDADE"}
                       </span>
                     </div>
 
                     <div className="leadMeta">
                       <span>
-                        <MapPin size={13} />
+                        <MapPin
+                          size={13}
+                        />
                         {lead.city}
                       </span>
 
-                      <span>
-                        Instagram
-                      </span>
+                      {lead.instagram && (
+                        <span>
+                          Instagram
+                        </span>
+                      )}
 
-                      <span>
-                        {lead.photos} fotos
-                      </span>
+                      {lead.whatsapp && (
+                        <span>
+                          WhatsApp
+                        </span>
+                      )}
                     </div>
                   </div>
 
                   <div className="leadWebsite">
-                    <span>Site próprio</span>
+                    <span>
+                      Site próprio
+                    </span>
 
-                    <strong className="no">
-                      Não identificado
+                    <strong
+                      className={
+                        lead.website
+                          ? "yes"
+                          : "no"
+                      }
+                    >
+                      {lead.website
+                        ? "Identificado"
+                        : "Não identificado"}
                     </strong>
                   </div>
 
                   <div className="score">
                     <span>SCORE</span>
-                    <strong>{lead.score}</strong>
+                    <strong>
+                      {lead.score}
+                    </strong>
                   </div>
 
                   <div className="leadActions">
@@ -314,11 +401,14 @@ export default function ProspectPage() {
                       href="/"
                       className="smallButton"
                       style={{
-                        textDecoration: "none",
+                        textDecoration:
+                          "none",
                       }}
                     >
                       Ver perfil
-                      <ChevronRight size={15} />
+                      <ChevronRight
+                        size={15}
+                      />
                     </Link>
                   </div>
                 </article>
@@ -329,14 +419,17 @@ export default function ProspectPage() {
 
         <div
           className="sourcesFooter"
-          style={{ marginTop: "28px" }}
+          style={{
+            marginTop: "28px",
+          }}
         >
           <Database size={15} />
 
           <span>
-            {searched
-              ? "Busca em modo de demonstração. A próxima etapa será conectar o motor de fontes públicas."
-              : "Nesta etapa estamos usando dados de demonstração. O próximo estágio será conectar uma fonte pública real ao mecanismo de prospecção."}
+            O EscarlateFinder utiliza fontes
+            habilitadas pelo motor de
+            prospecção. A abordagem das leads
+            é sempre manual.
           </span>
         </div>
       </div>
