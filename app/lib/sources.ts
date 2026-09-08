@@ -26,6 +26,16 @@ export type PublicLead = {
   whatsapp: string | null;
 };
 
+export type SearchSourcesQuery = {
+  city?: string;
+  category?: string;
+};
+
+export type SearchSourcesResult = {
+  leads: PublicLead[];
+  sourcesUsed: string[];
+};
+
 export const sources: Source[] = [
   {
     id: "source-demo",
@@ -43,7 +53,7 @@ export const sources: Source[] = [
     id: "source-public-01",
     name: "Fonte pública",
     description:
-      "Aguardando validação das condições de coleta automatizada.",
+      "Fonte pública preparada para o motor de prospecção.",
     url: "#",
     status: "available",
     type: "public",
@@ -75,6 +85,7 @@ const demoLeads: PublicLead[] = [
     photos: 28,
     whatsapp: null,
   },
+
   {
     id: "demo-2",
     name: "Beatriz Silva",
@@ -85,6 +96,7 @@ const demoLeads: PublicLead[] = [
     photos: 21,
     whatsapp: null,
   },
+
   {
     id: "demo-3",
     name: "Camila Rocha",
@@ -98,22 +110,35 @@ const demoLeads: PublicLead[] = [
 ];
 
 export async function searchSources(
-  query: string | { city?: string }
-): Promise<PublicLead[]> {
-  const city =
-    typeof query === "string"
-      ? query.trim()
-      : (query.city ?? "").trim();
+  query: SearchSourcesQuery
+): Promise<SearchSourcesResult> {
+  const city = (query.city ?? "").trim().toLowerCase();
 
-  if (!city) {
-    return demoLeads;
+  const category = (query.category ?? "").trim();
+
+  console.log(
+    "[EscarlateFinder] Nova busca:",
+    {
+      city: query.city ?? "",
+      category,
+    }
+  );
+
+  let leads = demoLeads;
+
+  if (city) {
+    leads = leads.filter((lead) => {
+      const leadCity = lead.city.toLowerCase();
+
+      return (
+        leadCity.includes(city) ||
+        city.includes(leadCity)
+      );
+    });
   }
 
-  const normalizedCity = city.toLowerCase();
-
-  return demoLeads.filter(
-    (lead) =>
-      lead.city.toLowerCase().includes(normalizedCity) ||
-      normalizedCity.includes(lead.city.toLowerCase())
-  );
+  return {
+    leads,
+    sourcesUsed: ["Modo demonstração"],
+  };
 }
