@@ -398,7 +398,6 @@ export default function ProspectPage() {
 
                   <div className="score">
                     <span>SCORE</span>
-
                     <strong>
                       {lead.score}
                     </strong>
