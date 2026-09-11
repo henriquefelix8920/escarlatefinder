@@ -8,8 +8,14 @@ const BASE_URL = "https://listouachou.com.br";
 
 export const listouAchouSource: LeadSource = {
   id: "listou-achou",
+
   name: "Listou Achou",
+
+  description:
+    "Fonte pública para pesquisa de profissionais e contatos disponibilizados publicamente.",
+
   type: "public",
+
   status: "available",
 
   async search(
@@ -23,12 +29,6 @@ export const listouAchouSource: LeadSource = {
         sourceName: "Listou Achou",
       };
     }
-
-    /*
-     * O Listou Achou utiliza URLs de cidade.
-     * Exemplo:
-     * https://listouachou.com.br/sao-paulo
-     */
 
     const citySlug = city
       .normalize("NFD")
@@ -67,14 +67,6 @@ export const listouAchouSource: LeadSource = {
       }
 
       const html = await response.text();
-
-      /*
-       * Nesta primeira etapa estamos apenas validando
-       * que conseguimos acessar a página pública.
-       *
-       * A extração dos perfis será feita no próximo passo,
-       * depois que confirmarmos que a consulta funciona.
-       */
 
       console.log(
         "[EscarlateFinder] Listou Achou consultado com sucesso.",
