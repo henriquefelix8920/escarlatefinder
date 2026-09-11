@@ -13,10 +13,7 @@ import {
   Loader2,
 } from "lucide-react";
 
-import {
-  searchSources,
-  PublicLead,
-} from "../lib/sources";
+import { searchSources } from "../lib/sources";
 
 const categories = [
   {
@@ -41,6 +38,17 @@ const categories = [
   },
 ];
 
+type Lead = {
+  id: string;
+  name: string;
+  city: string;
+  score: number;
+  instagram: string;
+  website: boolean;
+  photos: number;
+  whatsapp: string | null;
+};
+
 function scoreClass(score: number) {
   if (score >= 85) return "high";
   if (score >= 70) return "medium";
@@ -55,8 +63,7 @@ export default function ProspectPage() {
   const [searched, setSearched] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [results, setResults] = useState<PublicLead[]>([]);
-
+  const [results, setResults] = useState<Lead[]>([]);
   const [sourcesUsed, setSourcesUsed] =
     useState<string[]>([]);
 
@@ -89,7 +96,8 @@ export default function ProspectPage() {
   const selectedCategory =
     categories.find(
       (item) => item.value === category
-    )?.label ?? "Profissionais independentes";
+    )?.label ??
+    "Profissionais independentes";
 
   return (
     <main className="sourcesPage">
@@ -112,8 +120,8 @@ export default function ProspectPage() {
 
             <p>
               Pesquise oportunidades e encontre
-              profissionais com presença digital, mas
-              sem site próprio identificado.
+              profissionais com presença digital,
+              mas sem site próprio identificado.
             </p>
           </div>
         </header>
@@ -342,8 +350,7 @@ export default function ProspectPage() {
                       >
                         {lead.score >= 85
                           ? "ALTA PRIORIDADE"
-                          : lead.score >=
-                            70
+                          : lead.score >= 70
                           ? "BOA OPORTUNIDADE"
                           : "OPORTUNIDADE"}
                       </span>
@@ -391,6 +398,7 @@ export default function ProspectPage() {
 
                   <div className="score">
                     <span>SCORE</span>
+
                     <strong>
                       {lead.score}
                     </strong>
