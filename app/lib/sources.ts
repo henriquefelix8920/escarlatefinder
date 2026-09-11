@@ -1,11 +1,3 @@
-import { prospectSources } from "../prospect/sources";
-import type {
-  PublicLead,
-  ProspectQuery,
-} from "../prospect/contract";
-
-export type { PublicLead } from "../prospect/contract";
-
 export type SourceStatus =
   | "demo"
   | "available"
@@ -23,7 +15,21 @@ export type Source = {
   lastCollection: string | null;
 };
 
-export type SearchSourcesQuery = ProspectQuery;
+export type PublicLead = {
+  id: string;
+  name: string;
+  city: string;
+  score: number;
+  instagram: string;
+  website: boolean;
+  photos: number;
+  whatsapp: string | null;
+};
+
+export type SearchSourcesQuery = {
+  city?: string;
+  category?: string;
+};
 
 export type SearchSourcesResult = {
   leads: PublicLead[];
@@ -39,14 +45,14 @@ export const sources: Source[] = [
     url: "#",
     status: "demo",
     type: "manual",
-    leadsFound: 3,
+    leadsFound: 4,
     lastCollection: "Agora",
   },
   {
     id: "source-public-01",
     name: "Fonte pública",
     description:
-      "Fonte pública conectada ao motor de prospecção.",
+      "Fonte pública preparada para o motor de prospecção.",
     url: "#",
     status: "available",
     type: "public",
@@ -66,44 +72,65 @@ export const sources: Source[] = [
   },
 ];
 
+const demoLeads: PublicLead[] = [
+  {
+    id: "demo-1",
+    name: "Ana Martins",
+    city: "Uberlândia",
+    score: 92,
+    instagram: "@anamartins",
+    website: false,
+    photos: 28,
+    whatsapp: null,
+  },
+  {
+    id: "demo-2",
+    name: "Beatriz Silva",
+    city: "Uberlândia",
+    score: 86,
+    instagram: "@beatrizsilva",
+    website: false,
+    photos: 21,
+    whatsapp: null,
+  },
+  {
+    id: "demo-3",
+    name: "Camila Rocha",
+    city: "Uberlândia",
+    score: 78,
+    instagram: "@camilarocha",
+    website: false,
+    photos: 17,
+    whatsapp: null,
+  },
+];
+
 export async function searchSources(
   query: SearchSourcesQuery
 ): Promise<SearchSourcesResult> {
-  const normalizedQuery: ProspectQuery = {
-    city: (query.city ?? "").trim(),
-    category: (query.category ?? "").trim(),
-  };
+  const city = (query.city ?? "").trim().toLowerCase();
+  const category = (query.category ?? "").trim();
 
-  console.log(
-    "[EscarlateFinder] Executando busca real:",
-    normalizedQuery
-  );
+  console.log("[EscarlateFinder] Nova busca:", {
+    city: query.city ?? "",
+    category,
+  });
 
-  const availableSources = prospectSources.filter(
-    (source) =>
-      source.status === "available" ||
-      source.status === "connected"
-  );
+  let leads = demoLeads;
 
-  const results = await Promise.all(
-    availableSources.map((source) =>
-      source.search(normalizedQuery)
-    )
-  );
+  if (city) {
+    leads = leads.filter((lead) => {
+      const leadCity = lead.city.toLowerCase();
 
-  const leads: PublicLead[] = [];
-  const sourcesUsed: string[] = [];
-
-  for (const result of results) {
-    leads.push(...result.leads);
-
-    if (result.leads.length > 0) {
-      sourcesUsed.push(result.sourceName);
-    }
+      return (
+        leadCity.includes(city) ||
+        city.includes(leadCity)
+      );
+    });
   }
 
   return {
     leads,
-    sourcesUsed,
+    sourcesUsed: ["Modo demonstração"],
   };
 }
