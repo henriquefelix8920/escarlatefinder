@@ -1,3 +1,7 @@
+import {
+  prospectSources,
+} from "../prospect/sources";
+
 export type SourceStatus =
   | "demo"
   | "available"
@@ -48,6 +52,7 @@ export const sources: Source[] = [
     leadsFound: 4,
     lastCollection: "Agora",
   },
+
   {
     id: "source-public-01",
     name: "Fonte pública",
@@ -59,6 +64,7 @@ export const sources: Source[] = [
     leadsFound: 0,
     lastCollection: null,
   },
+
   {
     id: "source-api-01",
     name: "Integração API",
@@ -83,6 +89,7 @@ const demoLeads: PublicLead[] = [
     photos: 28,
     whatsapp: null,
   },
+
   {
     id: "demo-2",
     name: "Beatriz Silva",
@@ -93,6 +100,7 @@ const demoLeads: PublicLead[] = [
     photos: 21,
     whatsapp: null,
   },
+
   {
     id: "demo-3",
     name: "Camila Rocha",
@@ -108,29 +116,68 @@ const demoLeads: PublicLead[] = [
 export async function searchSources(
   query: SearchSourcesQuery
 ): Promise<SearchSourcesResult> {
-  const city = (query.city ?? "").trim().toLowerCase();
+  const city = (query.city ?? "").trim();
   const category = (query.category ?? "").trim();
 
-  console.log("[EscarlateFinder] Nova busca:", {
-    city: query.city ?? "",
-    category,
-  });
+  console.log(
+    "[EscarlateFinder] Nova busca:",
+    {
+      city,
+      category,
+    }
+  );
 
-  let leads = demoLeads;
+  /*
+   * Sem cidade:
+   * mantém o modo demonstração para que o dashboard
+   * continue funcionando enquanto as fontes reais
+   * estão sendo conectadas.
+   */
+  if (!city) {
+    return {
+      leads: demoLeads,
+      sourcesUsed: ["Modo demonstração"],
+    };
+  }
 
-  if (city) {
-    leads = leads.filter((lead) => {
-      const leadCity = lead.city.toLowerCase();
+  /*
+   * Com cidade:
+   * agora o pedido passa pelo MOTOR DE PROSPECÇÃO.
+   *
+   * O motor percorre as fontes públicas cadastradas
+   * em app/prospect/sources/.
+   */
+  const allLeads: PublicLead[] = [];
+  const sourcesUsed: string[] = [];
 
-      return (
-        leadCity.includes(city) ||
-        city.includes(leadCity)
+  for (const source of prospectSources) {
+    if (
+      source.status === "disabled"
+    ) {
+      continue;
+    }
+
+    try {
+      const result = await source.search({
+        city,
+        category,
+      });
+
+      if (result.leads.length > 0) {
+        allLeads.push(...result.leads);
+      }
+
+      sourcesUsed.push(result.sourceName);
+    } catch (error) {
+      console.error(
+        `[EscarlateFinder] Erro na fonte ${source.name}:`,
+        error
       );
-    });
+    }
   }
 
   return {
-    leads,
-    sourcesUsed: ["Modo demonstração"],
+    leads: allLeads,
+    sourcesUsed,
   };
 }
