@@ -4,6 +4,8 @@ import type {
   ProspectQuery,
 } from "../prospect/contract";
 
+export type { PublicLead } from "../prospect/contract";
+
 export type SourceStatus =
   | "demo"
   | "available"
@@ -40,7 +42,6 @@ export const sources: Source[] = [
     leadsFound: 3,
     lastCollection: "Agora",
   },
-
   {
     id: "source-public-01",
     name: "Fonte pública",
@@ -52,7 +53,6 @@ export const sources: Source[] = [
     leadsFound: 0,
     lastCollection: null,
   },
-
   {
     id: "source-api-01",
     name: "Integração API",
